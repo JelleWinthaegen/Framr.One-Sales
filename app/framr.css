@@ -1,0 +1,752 @@
+/* Framr.One ontwerpsysteem. De tokens komen uit het Claude Design-ontwerp van Jelle (besluit
+   2026-08-21); de maat en de indeling uit werkblad 2 op het ontwerpcanvas (akkoord Jelle
+   12-09-2026): menu links met de maatlijn erin, alles een maat groter, lijnen in plaats van dozen,
+   en geen donkere vullingen. Oranje is het enige accent en de enige selectiekleur; maten en labels
+   staan altijd in mono. */
+
+:root {
+  --grond: #FCFCFD;
+  --vlak: #FFFFFF;
+  --inkt: #1B1B1F;
+  --tekst: #3F3F47;
+  --label: #5C5C64;
+  --stil: #74747C;
+  --lijn: #E0E0E6;
+  --lijn-zacht: #E8E8ED;
+  --maatlijn: #C2C2BA;
+  --oranje: #EA5B10;
+  --oranje-donker: #CE4A08;
+  --oranje-zacht: #FDEBE0;
+  --groen: #1FA45A;
+  --groen-zacht: #D6F2E1;
+  --groen-tekst: #2E7D4F;
+  --kop: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  /* Het woordmerk staat los van de koppen. Gekozen door Jelle op 12-09-2026 voor de site en op
+     13-09-2026 vastgesteld als het definitieve logo, dus ook hier: Questrial, hoofdletter F, de
+     rest klein, en ".One" samen in oranje. Questrial heeft maar een gewicht en leest daardoor dun;
+     de dikte komt van een lijn op de letter, wat de ronde vorm heel laat.
+
+     Het portaal draagt hem iets dikker dan de site (0.042 tegen 0.028), op verzoek van Jelle. Dat
+     past ook bij waar hij staat: in de menukolom is hij kleiner dan de kop van de site, en dun
+     leest slechter naarmate de letter kleiner wordt. */
+  --merk: "Questrial", "Century Gothic", "Helvetica Neue", Arial, sans-serif;
+  --merk-dikte: 0.042em;
+  --lopend: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+  --zij: 248px;
+}
+
+* { box-sizing: border-box; }
+
+/* Het hidden-attribuut moet ook winnen van een klasse die display zet. Zonder deze regel blijft een
+   verborgen .fr-veldrij gewoon staan: display:flex uit de klasse overschrijft de standaardregel van
+   de browser, en dan verbergt hidden niets meer. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  background: var(--grond);
+  color: var(--inkt);
+  font-family: var(--lopend);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3, .fr-merk, .fr-knop, .fr-tab, .fr-seg button, .fr-keuze, .fr-in, .fr-rij .hoofd,
+.fr-form input, .fr-form select, .fr-form textarea { font-family: var(--kop); }
+
+a { color: var(--inkt); text-decoration: none; }
+a:hover { color: var(--oranje); }
+
+/* ---------- de schil: menu links, het blad rechts ---------- */
+
+.fr-schil { display: flex; min-height: 100vh; }
+
+.fr-zij {
+  width: var(--zij); flex: none; position: sticky; top: 0; height: 100vh; overflow: hidden;
+  background: var(--vlak); border-right: 1px solid var(--lijn);
+  display: flex; flex-direction: column; padding: 28px 0 24px;
+}
+
+/* De maatlijn in het menu: de basislijn met een streepje per onderdeel, en de oranje voortgang
+   die meetekent met het scrollen. */
+.fr-rail { position: absolute; left: 22px; top: 104px; bottom: 92px; width: 1px; pointer-events: none; }
+.fr-rail .basis { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--lijn); }
+.fr-rail .voortgang { position: absolute; left: 0; top: 0; width: 1px; height: 0; background: var(--oranje); transition: height .12s linear; }
+
+.fr-merk { display: block; padding: 0 22px 26px 36px; font-family: var(--merk); font-weight: 400; font-size: 25px; letter-spacing: -0.01em; line-height: 1.2; color: var(--inkt); -webkit-text-stroke: var(--merk-dikte) currentColor; paint-order: stroke fill; }
+.fr-merk:hover { color: var(--inkt); }
+.fr-merk .one { color: var(--oranje); }
+/* Het woordmerk is een woord en geen drie losse stukken. Zonder deze omhulling werd Framr in een
+   flexrij een eigen vakje, en dan valt de tussenruimte van de rij ook tussen Framr en .One. Dat was
+   op het inlogscherm goed te zien: een gat van twaalf pixels middenin de naam. */
+.fr-merk-naam, .fr-inlog__merk .naam { white-space: nowrap; }
+.fr-merk-label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--label); text-transform: uppercase; margin-top: 4px; font-weight: 400; }
+
+.fr-nav { display: flex; flex-direction: column; gap: 2px; }
+.fr-tab {
+  display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 16px 0 22px; margin-right: 18px;
+  font-size: 15px; color: var(--tekst); border-radius: 0 10px 10px 0; white-space: nowrap;
+}
+.fr-tab:hover { color: var(--inkt); background: #F4F4F6; }
+.fr-tab .tick { width: 8px; height: 1px; background: var(--maatlijn); flex: none; }
+.fr-tab svg { flex: none; stroke: var(--stil); }
+.fr-tab.actief { background: var(--oranje-zacht); color: var(--inkt); font-weight: 600; }
+.fr-tab.actief .tick { width: 14px; height: 2px; background: var(--oranje); }
+.fr-tab.actief svg { stroke: var(--oranje); }
+/* Mijn bedrijf staat op een groot scherm onderin het menu, als voet; het menu-item is er voor de
+   telefoon, waar de voet niet past. */
+.fr-tab.bedrijf { display: none; }
+
+.fr-zijvoet { display: block; margin: auto 18px 0 36px; padding-top: 18px; border-top: 1px solid var(--lijn-zacht); }
+.fr-zijvoet .naam { display: block; font-family: var(--kop); font-size: 15px; font-weight: 600; color: var(--inkt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fr-zijvoet .sub { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--stil); text-transform: uppercase; margin-top: 3px; }
+.fr-zijvoet:hover .naam, .fr-zijvoet.actief .sub { color: var(--oranje); }
+
+/* Het blad */
+.fr-inhoud { flex: 1 1 auto; width: 100%; min-width: 0; max-width: 1200px; margin: 0 auto; padding: 48px 56px 72px; }
+
+/* ---------- de kop van een pagina ---------- */
+
+.fr-paginakop { display: flex; align-items: flex-end; gap: 24px 40px; flex-wrap: wrap; margin-bottom: 30px; }
+.fr-paginakop > div:first-child { flex: 1 1 420px; min-width: 0; }
+.fr-paginakop-acties { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding-bottom: 6px; }
+.fr-paginakop-acties .fr-stand { font-size: 14.5px; }
+.fr-paginakop-acties .fr-fase { margin-right: 2px; }
+.fr-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; color: var(--oranje); text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin: 0; }
+.fr-eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--oranje); flex: none; }
+h1.fr-kop { font-size: 34px; line-height: 1.12; letter-spacing: -0.02em; font-weight: 600; margin: 10px 0 6px; text-wrap: balance; }
+.fr-onderkop { color: var(--tekst); font-size: 16.5px; max-width: 58ch; margin: 0 0 30px; }
+.fr-paginakop .fr-onderkop { margin-bottom: 0; }
+
+/* ---------- tellers ---------- */
+
+.fr-tegels { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; margin: 8px 0 12px; }
+.fr-tegel { padding: 4px 28px 8px 0; }
+.fr-tegel + .fr-tegel { padding-left: 28px; border-left: 1px solid var(--lijn); }
+.fr-tegel .naam { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--label); text-transform: uppercase; }
+.fr-tegel .waarde { font-family: var(--mono); font-size: 40px; font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; margin-top: 8px; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.fr-tegel .waarde small { font-size: 14px; font-weight: 400; color: var(--label); letter-spacing: 0; }
+/* Een teller die om actie vraagt (er valt iets te bestellen) staat oranje. */
+.fr-tegel .waarde.let { color: var(--oranje); }
+/* Een bedrag is langer dan een aantal en past niet op 48 pixels in een teller van een kwart blad. */
+.fr-tegel .waarde.geld { font-size: 30px; }
+
+/* ---------- lijsten: lijnen in plaats van kaarten ---------- */
+
+/* De kop boven een blok, met de maatlijn erboven. */
+.fr-blokkop { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 40px 0 0; padding: 18px 0 12px; border-top: 2px solid var(--maatlijn); }
+.fr-blokkop h2 { font-size: 21px; letter-spacing: -0.015em; font-weight: 600; margin: 0; }
+/* De telling naast een kop: een getal in een rond vakje. Een maat (zoals het vloertotaal) blijft
+   gewoon een regel in mono. */
+.fr-blokkop .maatje { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 28px; padding: 2px 10px 0; border-radius: 999px; background: var(--vlak); border: 1.5px solid #CFCFD6; font-family: var(--kop); font-size: 14px; font-weight: 700; line-height: 1; color: var(--inkt); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.fr-blokkop #im-vloersom, .fr-blokkop #im-kozijnsom { height: auto; min-width: 0; padding: 0; border: 0; background: transparent; font-family: var(--mono); font-size: 13px; font-weight: 400; color: var(--tekst); }
+.fr-blokkop .rechts { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* De kolomkoppen boven een lijst. Ze dragen dezelfde klassen als de cellen in een rij, zodat ze
+   erboven staan zonder een tabel te hoeven zijn. */
+.fr-th { display: flex; align-items: center; gap: 18px; padding: 8px 0; border-bottom: 1px solid var(--lijn); font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--label); }
+
+.fr-rijen { display: flex; flex-direction: column; }
+.fr-rij { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; min-height: 68px; padding: 16px 0; border-bottom: 1px solid var(--lijn); position: relative; isolation: isolate; }
+/* Aanwijzen licht de rij zacht op, iets breder dan de lijnen, zonder dat er iets verschuift. */
+.fr-rij::before { content: ""; position: absolute; inset: 1px -14px; border-radius: 10px; background: var(--oranje-zacht); opacity: 0; z-index: -1; transition: opacity .12s; }
+.fr-rij:hover::before { opacity: .45; }
+.fr-rij .hoofd { font-weight: 600; font-size: 17px; min-width: 180px; line-height: 1.3; }
+/* De naam is de weg naar binnen: een dunne streep eronder zegt dat, ook zonder muis. */
+.fr-rij .hoofd a { border-bottom: 1.5px solid var(--lijn); padding-bottom: 1px; transition: border-color .12s; }
+.fr-rij .hoofd a:hover { color: var(--inkt); border-bottom-color: var(--oranje); }
+
+/* De hele rij is de weg naar binnen, niet alleen de naam.
+
+   Myron liep hier tegenaan in zijn testronde (20-09-2026): je mikt op een woord van twee
+   centimeter terwijl de rij de volle breedte heeft, en de rij licht bij het aanwijzen al op alsof
+   hij klikbaar is. Dat beloofde het scherm dus al zonder het waar te maken.
+
+   Het is een overlay op de bestaande link en geen tweede link: zo blijft er een naam om met het
+   toetsenbord te bereiken en een voorleesprogramma leest er niet dubbel. Alles wat zelf een
+   handeling draagt (de knoppen achteraan, het puntjesmenu, een keuzelijst in een rij) gaat er
+   met een eigen stapel bovenop, anders vangt de overlay die klikken op. */
+.fr-rij .hoofd a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.fr-rij .rechts, .fr-rij .fr-meer, .fr-rij .fr-actie, .fr-rij button, .fr-rij select, .fr-rij input,
+.fr-rij .sub a, .fr-rij label { position: relative; z-index: 2; }
+.fr-rij .sub { color: var(--tekst); font-size: 15px; }
+.fr-rij .sub .wie { color: var(--inkt); }
+.fr-rij .sub .waar { color: var(--label); }
+.fr-rij .sub .punt { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: var(--maatlijn); margin: 0 9px; vertical-align: middle; }
+/* Een aantal met een icoontje: de inmetingen en offertes van een klus. */
+.fr-tel { display: inline-flex; align-items: center; gap: 6px; margin-right: 16px; font-family: var(--mono); font-size: 13px; color: var(--tekst); }
+.fr-tel svg { width: 15px; height: 15px; stroke: var(--stil); }
+.fr-tel b { font-weight: 500; }
+.fr-rij .sub a { border-bottom: 1px solid var(--lijn); }
+.fr-rij .maatje { font-family: var(--mono); font-size: 13px; color: var(--tekst); letter-spacing: .02em; font-variant-numeric: tabular-nums; line-height: 1.5; display: inline-flex; align-items: baseline; gap: 14px; }
+/* Een bedrag of een maat staat rechts uitgelijnd in een vast vakje en een datum links ernaast,
+   zodat ze in alle rijen van een lijst precies onder elkaar staan. */
+.fr-rij .maatje .geld, .fr-rij .maatje .tal { display: inline-block; text-align: right; white-space: nowrap; }
+.fr-rij .maatje .geld { min-width: 96px; color: var(--inkt); }
+.fr-rij .maatje .tal { min-width: 80px; }
+.fr-rij .maatje .wanneer { color: var(--label); white-space: nowrap; }
+/* De knoppen achteraan een rij mogen afbreken. Zonder wrap duwden vier knoppen (de inmetingrij op
+   de klantkaart) de pagina op een telefoon een stuk breder dan het scherm. */
+.fr-rij .rechts { margin-left: auto; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Een lijst met kolommen: elke rij is een raster met dezelfde verdeling, zodat de rijen onder
+   elkaar uitlijnen en de kolomkoppen erboven kloppen. Op een telefoon vallen ze weer los. */
+@media (min-width: 901px) {
+  .fr-rijen.tabel .fr-rij, .fr-th { display: grid; grid-template-columns: minmax(0, 20fr) minmax(0, 33fr) minmax(0, 17fr) minmax(0, 30fr); align-items: center; }
+  .fr-rijen.tabel.klanten .fr-rij, .fr-th.klanten { grid-template-columns: minmax(0, 19fr) minmax(0, 24fr) minmax(0, 28fr) minmax(0, 24fr) minmax(0, 5fr); }
+  /* Elke cel een regel: wat niet past krijgt puntjes, zodat alle rijen even hoog zijn en alles
+     op een lijn ligt. */
+  .fr-rijen.tabel .hoofd, .fr-rijen.tabel .sub, .fr-rijen.tabel .maatje { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fr-rijen.tabel .hoofd a { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; }
+  /* De laatste kolom in vaste vakken: de faselijn, dan de stand of een actie links uitgelijnd,
+     dan het puntjesmenu. Zo staan alle stippen precies onder elkaar. */
+  .fr-rijen.tabel .rechts { margin-left: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) 32px; align-items: center; justify-items: start; gap: 14px; width: 100%; }
+  .fr-rijen.tabel .rechts > :only-child { grid-column: 1; }
+  .fr-rijen.tabel .rechts .fr-meer { grid-column: 3; }
+  /* De regels van een offerte of factuur: het bedrag rechts uitgelijnd, met een kop erboven. */
+  .fr-rijen.tabel.regels .fr-rij, .fr-th.regels { grid-template-columns: minmax(0, 30fr) minmax(0, 34fr) minmax(0, 16fr) minmax(0, 20fr); }
+  .fr-rijen.tabel.regels .rechts { display: flex; justify-content: flex-end; }
+  .fr-th.regels .rechts { text-align: right; }
+  .fr-rijen.tabel.regels .rechts .geld { font-family: var(--mono); font-size: 14px; color: var(--inkt); font-variant-numeric: tabular-nums; }
+}
+
+/* De stand: een stip en een woord. Oranje als er iets te doen valt, een oranje ring als het bij
+   een ander ligt, groen als het klaar is, grijs als het stil ligt. */
+.fr-stand { display: inline-flex; align-items: center; gap: 9px; font-family: var(--kop); font-size: 13.5px; font-weight: 600; color: var(--inkt); white-space: nowrap; }
+.fr-stand i { width: 9px; height: 9px; border-radius: 50%; background: var(--oranje); box-shadow: 0 0 0 3px var(--oranje-zacht); flex: none; box-sizing: border-box; }
+.fr-stand.wacht i { background: var(--vlak); border: 2px solid var(--oranje); box-shadow: none; }
+.fr-stand.klaar i { background: var(--groen); box-shadow: 0 0 0 3px var(--groen-zacht); }
+.fr-stand.klaar { color: var(--groen-tekst); }
+.fr-stand.stil { color: var(--label); font-weight: 500; }
+.fr-stand.stil i { background: var(--lijn); box-shadow: none; }
+/* De fase van een klus als maatlijn: zes streepjes, tot waar hij is oranje. */
+.fr-fase { display: inline-flex; align-items: flex-end; gap: 3px; height: 12px; }
+.fr-fase i { width: 3px; height: 8px; border-radius: 1px; background: var(--lijn); }
+.fr-fase i:nth-child(odd) { height: 12px; }
+.fr-fase i.aan { background: var(--oranje); }
+.fr-fase.stil i.aan { background: var(--stil); }
+
+/* ---------- knoppen ---------- */
+
+.fr-knop {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px;
+  border: 0; border-radius: 999px; cursor: pointer; font-size: 15px; font-weight: 600; line-height: 1;
+  background: var(--oranje); color: #fff; white-space: nowrap; transition: background .12s, border-color .12s;
+}
+.fr-knop:hover { background: var(--oranje-donker); color: #fff; }
+.fr-knop.tweede { background: var(--vlak); color: var(--inkt); border: 1px solid var(--lijn); box-shadow: none; }
+.fr-knop.tweede:hover { border-color: var(--stil); background: var(--vlak); color: var(--inkt); }
+.fr-knop.klein { height: 34px; padding: 0 14px; font-size: 13.5px; }
+
+/* Een actie als woord met een streep eronder: voor wat naast een rij of een kop hoort zonder een
+   knop te zijn (Doorrekenen, Naar offerte, Alle klussen). */
+.fr-actie { background: none; border: 0; padding: 0 0 1px; cursor: pointer; font-family: var(--kop); font-size: 14.5px; font-weight: 600; color: var(--inkt); border-bottom: 2px solid var(--lijn); line-height: 1.4; white-space: nowrap; transition: border-color .12s; }
+.fr-actie:hover { color: var(--inkt); border-bottom-color: var(--oranje); }
+
+/* Het puntjesmenu achteraan een rij: een rond knopje, en een lijstje eronder dat opent en dicht
+   gaat zonder script (details), en dichtgaat zodra je ernaast klikt. */
+.fr-meer { position: relative; flex: none; }
+.fr-meer summary { list-style: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; border: 1px solid transparent; color: var(--label); cursor: pointer; transition: background .12s, border-color .12s; }
+.fr-meer summary::-webkit-details-marker { display: none; }
+.fr-meer summary:hover, .fr-meer[open] summary { background: var(--vlak); border-color: var(--lijn); color: var(--inkt); }
+.fr-meer-lijst { position: absolute; right: 0; top: calc(100% + 6px); min-width: 220px; padding: 6px; background: var(--vlak); border: 1px solid var(--lijn); border-radius: 12px; box-shadow: 0 14px 34px rgba(27, 27, 31, .12); z-index: 30; display: flex; flex-direction: column; gap: 2px; }
+.fr-meer-lijst .fr-knop { height: 38px; width: 100%; justify-content: flex-start; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--inkt); font-size: 14.5px; font-weight: 500; }
+.fr-meer-lijst .fr-knop:hover { background: var(--oranje-zacht); color: var(--inkt); border: 0; }
+.fr-knop[disabled] { opacity: .5; cursor: default; }
+
+/* Een rij losse keuzeknoppen, zoals de stappen van een klus. */
+.fr-chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.fr-knoppenrij { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+
+/* ---------- de snelkaarten en de schakels ---------- */
+
+.fr-snel { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 36px; margin: 0 0 10px; }
+.fr-kaart { display: block; padding: 18px 0; border-bottom: 1px solid var(--lijn); }
+.fr-kaart:hover { color: var(--inkt); }
+.fr-kaart .k { display: block; font-family: var(--kop); font-size: 19px; font-weight: 600; margin-bottom: 4px; border-bottom: 2px solid transparent; width: max-content; max-width: 100%; }
+.fr-kaart:hover .k { border-bottom-color: var(--oranje); }
+.fr-kaart .o { display: block; font-size: 15px; color: var(--label); line-height: 1.5; }
+
+/* Twee panelen naast elkaar. Op een telefoon vallen ze onder elkaar. */
+.fr-twee { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; align-items: start; }
+/* In een half blad past een rij niet op een regel: de naam bovenaan, eronder de klant en de maat,
+   de stand rechts over beide regels heen. */
+@media (min-width: 901px) {
+  /* Naam en klant links onder elkaar, het bedrag en de datum in het midden, de stand rechts in
+     een vast vak; zo staat in het hele paneel alles onder elkaar. */
+  .fr-twee .fr-rij { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; grid-template-rows: auto auto; gap: 3px 22px; align-items: center; }
+  .fr-twee .fr-rij .hoofd { grid-column: 1; grid-row: 1; min-width: 0; }
+  .fr-twee .fr-rij .sub { grid-column: 1; grid-row: 2; }
+  .fr-twee .fr-rij .maatje { grid-column: 2; grid-row: 1 / span 2; justify-self: end; white-space: nowrap; }
+  .fr-twee .fr-rij .rechts { grid-column: 3; grid-row: 1 / span 2; margin-left: 0; min-width: 112px; justify-content: flex-start; }
+  .fr-twee .fr-rij .rechts:empty { min-width: 0; }
+}
+
+/* De schakels onder Mijn bedrijf: wat gebruik je. Aan is de gewone stand, dus die is rustig; uit
+   valt op doordat de regel dooft, want dat is de afwijking die je moet kunnen zien. */
+.fr-schakels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 36px; margin-bottom: 10px; }
+.fr-schakel {
+  text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--lijn);
+  padding: 18px 0; cursor: pointer; font-family: var(--lopend); color: var(--inkt);
+}
+.fr-schakel:hover .k { color: var(--oranje); }
+.fr-schakel .k { display: flex; align-items: baseline; gap: 10px; font-family: var(--kop); font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+/* Aan of uit als stip met een woord, dezelfde taal als de stand van een klus. */
+.fr-schakel .stand { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; font-family: var(--kop); font-size: 13.5px; font-weight: 600; text-transform: capitalize; color: var(--label); }
+.fr-schakel .stand::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--vlak); border: 2px solid var(--lijn); box-sizing: border-box; }
+.fr-schakel.aan .stand { color: var(--inkt); }
+.fr-schakel.aan .stand::before { background: var(--oranje); border: 0; box-shadow: 0 0 0 3px var(--oranje-zacht); }
+.fr-schakel .o { display: block; font-size: 15px; color: var(--label); line-height: 1.5; }
+.fr-schakel:not(.aan) .k, .fr-schakel:not(.aan) .o { color: var(--stil); }
+
+/* ---------- zoeken en bladeren ---------- */
+
+.fr-zoekbalk { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 0 4px; padding: 14px 0; }
+.fr-zoekbalk input[type="search"], .fr-zoekbalk select {
+  min-height: 44px; padding: 0 14px; border: 1px solid var(--lijn); border-radius: 10px;
+  background: var(--vlak); color: var(--inkt); font-family: var(--kop); font-size: 15px;
+}
+.fr-zoekbalk input[type="search"] { flex: 1; min-width: 220px; max-width: 420px; }
+.fr-zoekbalk input[type="search"]:focus, .fr-zoekbalk select:focus { outline: none; border-color: var(--oranje); box-shadow: 0 0 0 1px var(--oranje); }
+.fr-filterrij { flex-basis: 100%; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 12px 0 4px; }
+
+.fr-blader { display: flex; justify-content: flex-end; align-items: center; gap: 14px; margin-top: 18px; }
+.fr-blader:empty { display: none; }
+.fr-blader .maatje { font-family: var(--mono); font-size: 12px; color: var(--stil); letter-spacing: .08em; }
+
+/* ---------- leeg, noot, melding ---------- */
+
+/* Leeg scherm dat vertelt wat er komt: een regel in de lijst, geen doos. */
+.fr-leeg { padding: 20px 0; border-bottom: 1px solid var(--lijn); color: var(--tekst); font-size: 15.5px; max-width: 70ch; }
+.fr-leeg .naam { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--oranje); text-transform: uppercase; margin-bottom: 8px; }
+.fr-leeg p { margin: 8px 0; }
+
+.fr-note { border-left: 2px solid var(--oranje); padding: 2px 0 2px 16px; margin: 32px 0 0;
+  font-size: 15.5px; color: var(--tekst); max-width: 74ch; line-height: 1.6; }
+.fr-note b { color: var(--inkt); }
+
+/* Een hint in een zin is lopende tekst; een hint in een label of achter een getal is mono. */
+.fr-hint { font-family: var(--mono); font-size: 13px; color: var(--stil); letter-spacing: .02em; font-weight: 400; line-height: 1.6; }
+p.fr-hint { font-family: var(--lopend); font-size: 15px; color: var(--label); letter-spacing: 0; max-width: 70ch; margin: 0 0 16px; }
+.fr-formfout { color: var(--oranje-donker); font-size: 15px; min-height: 1.2em; margin: 10px 0 0; }
+
+/* Korte melding onderin beeld: wit met een oranje rand, geen donkere balk. */
+.fr-melding { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  background: var(--vlak); color: var(--inkt); font-size: 15px; padding: 12px 18px; border-radius: 10px;
+  border: 1px solid var(--lijn); border-left: 3px solid var(--oranje);
+  box-shadow: 0 14px 34px rgba(27, 27, 31, .14); z-index: 90; max-width: calc(100vw - 40px); }
+
+/* ---------- formulieren ---------- */
+
+.fr-login { max-width: 560px; margin: 8vh auto 0; }
+
+/* ---------- het inlogscherm ----------
+
+   De enige pagina die een bezoeker ziet voordat hij iets van het portaal weet, en tot 13-09-2026
+   ook de enige zonder merk: het menu links is dan verborgen, dus er stond een kaal formulier op een
+   lege grond. Nu draagt hij zelf de naam, de belofte en wat je ermee doet.
+
+   Twee kolommen op een breed scherm, gescheiden door een lijn en niet door een doos, met het
+   verhaal links en het formulier rechts. Onder de 900 pixels zakt het formulier onder het verhaal.
+   Geen vlakken, geen kaders, dezelfde bijna witte grond als de rest. */
+
+.fr-inlog { display: grid; grid-template-columns: 1.05fr 1fr; align-items: stretch;
+  max-width: 1020px; margin: 11vh auto 0; }
+.fr-inlog__verhaal { padding-right: 64px; }
+.fr-inlog__merk { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 12px;
+  font-family: var(--merk); font-size: 26px; font-weight: 400; letter-spacing: -0.01em;
+  -webkit-text-stroke: var(--merk-dikte) currentColor; paint-order: stroke fill;
+  margin: 0 0 34px; }
+.fr-inlog__merk .one { color: var(--oranje); }
+.fr-inlog__merk .label { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+  color: var(--label); text-transform: uppercase; font-weight: 400; }
+.fr-inlog h1.fr-kop { font-size: 38px; margin-bottom: 14px; }
+.fr-inlog .fr-onderkop { margin-bottom: 34px; max-width: 42ch; }
+
+/* Wat je ermee doet, als drie regels op een rij: een streepje, een woord in mono, de zin erachter.
+   Dezelfde maatlijn als in het menu, zodat het scherm bij de rest hoort. */
+.fr-inlog__lijst { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--maatlijn); }
+.fr-inlog__lijst li { display: flex; align-items: baseline; gap: 16px; padding: 13px 0;
+  border-bottom: 1px solid var(--lijn-zacht); color: var(--tekst); font-size: 15.5px; }
+.fr-inlog__lijst b { font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--oranje); font-weight: 400; flex: none; width: 88px; }
+
+.fr-inlog__vak { padding-left: 64px; border-left: 1px solid var(--lijn); }
+.fr-inlog__vak h2 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+.fr-inlog__vak .fr-onderkop { font-size: 15px; margin-bottom: 22px; max-width: none; }
+.fr-inlog__vak .fr-form { margin-top: 0; }
+.fr-inlog__vak .fr-knop { width: 100%; }
+.fr-inlog__nieuw { margin: 18px 0 0; font-size: 15px; color: var(--tekst); }
+.fr-inlog__nieuw .fr-actie { margin-left: 6px; }
+
+/* Op een telefoon komt het formulier boven het verhaal te staan. Wie terugkomt wil inloggen en
+   niet eerst langs de uitleg scrollen; wie nieuw is leest gewoon door. */
+/* Het aanmeldscherm: breder dan het inlogscherm, want hier staan drie velden naast elkaar. De
+   blokkoppen erin zijn alleen een streep met een woord, zonder de marge van een paginakop. */
+.fr-aanmeld { max-width: 900px; }
+.fr-aanmeld .fr-onderkop { max-width: 62ch; }
+.fr-aanmeld .fr-blokkop { margin-top: 26px; padding-bottom: 8px; }
+.fr-aanmeld .fr-blokkop:first-of-type { margin-top: 6px; }
+
+@media (max-width: 900px) {
+  .fr-inlog { grid-template-columns: 1fr; margin-top: 6vh; }
+  .fr-inlog__merk { order: -2; margin-bottom: 26px; }
+  .fr-inlog__vak { order: -1; padding-left: 0; border-left: 0; }
+  .fr-inlog__verhaal { padding-right: 0; margin-top: 40px; padding-top: 30px;
+    border-top: 2px solid var(--maatlijn); }
+  .fr-inlog h1.fr-kop { font-size: 30px; }
+  .fr-inlog .fr-onderkop { max-width: none; }
+}
+.fr-form { display: flex; flex-direction: column; gap: 16px; margin-top: 22px; max-width: 560px; }
+.fr-form-breed { max-width: none; }
+
+/* ---------- invullen met het vel ernaast ---------- */
+
+/* Keuze van Jelle, 17-09-2026: een offerte hoort zichtbaar te zijn terwijl je hem invult, want dan
+   zie je meteen het resultaat van wat je intikt. Links vul je in, rechts loopt het vel mee; het
+   vel blijft staan als de invulkolom langer wordt. Op een smal scherm valt het vel eronder, want
+   twee kolommen naast elkaar worden daar allebei onleesbaar. */
+.fr-werkblad { display: flex; gap: 44px; align-items: flex-start; }
+.fr-invullen { flex: 1 1 520px; min-width: 0; }
+.fr-meekijk { flex: 1 1 440px; min-width: 0; position: sticky; top: 28px; }
+.fr-meekijk-kop {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--stil); margin: 30px 0 12px;
+}
+.fr-meekijk .fr-hint { margin-top: 14px; }
+/* Het blad mag breder worden zodra er een vel naast staat; op 1200 werd allebei de helften te
+   smal en bleef er op een breed scherm een leeg vlak over. */
+.fr-inhoud:has(.fr-werkblad) { max-width: 1760px; }
+
+@media (max-width: 1180px) {
+  .fr-werkblad { flex-direction: column; gap: 8px; }
+  .fr-meekijk { position: static; width: 100%; }
+}
+.fr-form label { display: flex; flex-direction: column; gap: 7px; font-size: 13.5px; font-weight: 500; color: var(--label); flex: 1 1 200px; min-width: 120px; }
+/* Een label dat recht onder het vorige staat hoort zo hoog te zijn als zijn inhoud. De regel
+   hierboven (flex: 1 1 200px) is bedoeld voor labels die naast elkaar in een rij staan; in een
+   formulier dat van boven naar beneden loopt maakte diezelfde regel elk label 200 pixels hoog, met
+   gaten van tien centimeter tussen de velden. Dat was op het inlogscherm goed te zien. */
+.fr-form > label { flex: 0 0 auto; }
+.fr-form input, .fr-form select, .fr-form textarea {
+  font-size: 15.5px; color: var(--inkt); min-height: 44px; width: 100%; min-width: 0;
+  background: var(--vlak); border: 1px solid var(--lijn); border-radius: 10px; padding: 0 14px;
+}
+.fr-form textarea { padding: 12px 16px; min-height: 96px; line-height: 1.5; resize: vertical; }
+.fr-form input:focus, .fr-form select:focus, .fr-form textarea:focus { outline: none; border-color: var(--oranje); box-shadow: 0 0 0 1px var(--oranje); }
+.fr-form input[type="checkbox"] { width: 20px; min-height: 0; height: 20px; accent-color: var(--oranje); }
+.fr-form input[type="file"] { min-height: 0; padding: 10px 0; border: 0; background: transparent; }
+
+/* Een los veld buiten een formulier, met alleen de invultekst als label. Voor blokken waar de rij
+   zichzelf uitlegt, zoals het nieuw-klus-blok boven de klussenlijst. */
+.fr-in {
+  font-size: 15.5px; color: var(--inkt); flex: 1; min-width: 150px; min-height: 44px;
+  background: var(--vlak); border: 1px solid var(--lijn); border-radius: 10px; padding: 0 14px;
+}
+.fr-in:focus { outline: none; border-color: var(--oranje); box-shadow: 0 0 0 1px var(--oranje); }
+/* Een keuzelijst of getal dat in een rij meeloopt, naast de knoppen. */
+.fr-in.klein { min-height: 36px; padding: 0 10px; font-size: 13.5px; max-width: 200px; min-width: 0; }
+.fr-veldlabel { display: flex; flex-direction: column; gap: 7px; font-size: 13.5px; font-weight: 500; color: var(--label); flex: 1 1 200px; min-width: 120px; }
+.fr-veldrij { display: flex; gap: 14px; flex-wrap: wrap; }
+.fr-veldrij + .fr-veldrij { margin-top: 14px; }
+
+.fr-logoveld { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.fr-logovak {
+  width: 160px; height: 84px; border: 1px dashed var(--lijn); border-radius: 10px; background: var(--vlak);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 8px; flex: none;
+}
+.fr-logovak img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.fr-logovak span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); }
+.fr-logoveld > div { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; flex: 1; min-width: 220px; }
+.fr-logoveld .fr-hint { max-width: 52ch; }
+.fr-vinkbtw {
+  font-family: var(--mono); font-size: 12px; color: var(--label);
+  background: var(--vlak); border: 1px solid var(--lijn); border-radius: 8px; padding: 6px 8px;
+}
+
+/* De keuzeknoppen: een gekozen stand is oranje, de rest wit met een rand. Pillen, geen dozen. */
+.fr-seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.fr-seg button { flex: 0 1 auto; min-height: 40px; padding: 0 16px; border: 1px solid var(--lijn); background: var(--vlak); color: var(--tekst); border-radius: 999px; font-size: 14.5px; font-weight: 500; cursor: pointer; }
+.fr-seg button:hover { border-color: var(--oranje); }
+.fr-seg button.aan { background: var(--oranje); border-color: var(--oranje); color: #fff; }
+.fr-seg.klein button { min-height: 32px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; padding: 0 12px; }
+
+.fr-keuze { padding: 8px 15px; border: 1px solid var(--lijn); background: var(--vlak); color: var(--tekst); border-radius: 999px; font-size: 14.5px; font-weight: 500; cursor: pointer; line-height: 1.3; }
+.fr-keuze:hover { border-color: var(--oranje); }
+.fr-keuze.aan { background: var(--oranje); border-color: var(--oranje); color: #fff; }
+/* Een keuze die van boven komt (de opname, de verdieping, de standaard) staat licht oranje; een
+   eigen keuze staat vol oranje. Zo is in een oogopslag te zien wat de vakman zelf heeft gezegd. */
+.fr-keuze.aan.geerfd { background: var(--oranje-zacht); border-color: var(--oranje); color: var(--oranje-donker); }
+
+/* ---------- de inmeetkaart ---------- */
+
+/* De genummerde stappen: een mono-label met de maatlijn eronder. */
+.fr-calc-pt { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--oranje); margin: 40px 0 18px; padding-bottom: 10px; border-bottom: 2px solid var(--maatlijn); }
+.fr-calc-pt .fr-hint { text-transform: none; letter-spacing: .08em; }
+.fr-calc-pt:first-child { margin-top: 0; }
+
+/* Een ruimte is een rij met velden en een maatregel eronder, geen kader. */
+.fr-ruimte { border: 0; border-bottom: 1px solid var(--lijn); border-radius: 0; padding: 24px 0 18px; margin: 0; min-width: 0; background: transparent; display: flex; flex-direction: column; gap: 14px; }
+.fr-ruimte legend { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--stil); padding: 0; margin-bottom: 4px; }
+.fr-ruimtesom { margin: 0; font-family: var(--mono); font-size: 14px; color: var(--label); }
+.fr-ruimtevoet { display: flex; align-items: center; justify-content: space-between; gap: 12px 22px; flex-wrap: wrap; }
+#im-ruimtes { display: flex; flex-direction: column; }
+.fr-zoneruimtes { display: flex; flex-direction: column; }
+.fr-zoneruimtes:empty { min-height: 0; }
+
+/* De knoppen bij een ruimte of een verdieping zijn woorden met een streep eronder, geen knoppen:
+   Anders dan de rest, Niet rechthoekig, Plint aanpassen, Weg. Alleen de hoofdknop blijft een knop. */
+.fr-ruimtevoet .fr-knop.klein.tweede, .fr-zonekop .fr-knop.klein.tweede, .fr-geo .fr-knop.klein.tweede,
+.fr-afwijk .fr-knop.klein.tweede, #im-vloerdeel > .fr-knoppenrij .fr-knop.klein.tweede,
+#im-kozijndeel > .fr-knoppenrij .fr-knop.klein.tweede, #im-vastdeel .fr-knoppenrij .fr-knop.klein.tweede,
+.fr-werkregel .fr-knop.klein.tweede {
+  height: auto; padding: 0 0 1px; border: 0; border-bottom: 2px solid var(--lijn); border-radius: 0;
+  background: transparent; color: var(--label); font-size: 14.5px; font-weight: 500; box-shadow: none; line-height: 1.4;
+}
+.fr-ruimtevoet .fr-knop.klein.tweede:hover, .fr-zonekop .fr-knop.klein.tweede:hover, .fr-geo .fr-knop.klein.tweede:hover,
+.fr-afwijk .fr-knop.klein.tweede:hover, #im-vloerdeel > .fr-knoppenrij .fr-knop.klein.tweede:hover,
+#im-kozijndeel > .fr-knoppenrij .fr-knop.klein.tweede:hover, #im-vastdeel .fr-knoppenrij .fr-knop.klein.tweede:hover,
+.fr-werkregel .fr-knop.klein.tweede:hover { color: var(--inkt); border-bottom-color: var(--oranje); background: transparent; }
+.fr-ruimtevoet .fr-knoppenrij { margin: 0; gap: 22px; }
+#im-vloerdeel > .fr-knoppenrij, #im-kozijndeel > .fr-knoppenrij { gap: 22px; padding: 18px 0 4px; }
+.fr-werkregel { align-items: flex-end; }
+.fr-werkregel .fr-knop.klein.tweede { margin-bottom: 14px; }
+
+/* Verdiepingen (stap 2): een kopregel met de naam en haar ruimtes eronder. Zonder verdiepingen is
+   er geen kop en staan de ruimtes zoals ze altijd stonden. */
+.fr-zone + .fr-zone { margin-top: 28px; }
+.fr-zonekop { display: flex; align-items: center; gap: 12px 22px; flex-wrap: wrap; padding: 12px 0; margin: 0; border-top: 2px solid var(--maatlijn); border-bottom: 1px solid var(--lijn); }
+.fr-zonekop.stil { border-top: 0; padding: 8px 0; }
+.fr-zonekop .fr-eyebrow { font-size: 12px; letter-spacing: .14em; }
+.fr-zonekop .fr-eyebrow::before { background: currentColor; }
+.fr-zonekop input.fr-in { flex: 1; min-width: 160px; max-width: 360px; min-height: 40px; font-size: 20px; font-weight: 600; border-color: transparent; background: transparent; padding: 0 10px; margin-left: -10px; }
+.fr-zonekop input.fr-in:hover { border-color: var(--lijn); }
+.fr-zonekop input.fr-in:focus { border-color: var(--oranje); background: var(--vlak); }
+.fr-zonekop .fr-knoppenrij { margin: 0 0 0 auto; gap: 22px; }
+
+/* Het paneel voor wat afwijkt: een inspringing met een lijn, geen doos. */
+.fr-afwijk { margin: 22px 0 6px; padding: 4px 0 4px 28px; border: 0; border-left: 2px solid var(--lijn); background: transparent; }
+.fr-zone .fr-afwijk { margin: 18px 0 10px; padding: 4px 0 4px 28px; border: 0; border-left: 2px solid var(--lijn); border-radius: 0; background: transparent; }
+.fr-afwijk > p.fr-hint { font-family: var(--mono); font-size: 12px; color: var(--stil); margin: 0 0 18px; }
+.fr-afwijk .fr-vast { margin-top: 0; }
+.fr-afwijk .fr-vast .vraag .v { font-size: 11px; }
+.fr-afwijk .fr-keuze { padding: 6px 12px; font-size: 13.5px; }
+.fr-afwijk .fr-calc-pt { margin: 24px 0 6px; padding-bottom: 0; border-bottom: 0; }
+
+/* De vaststel-vragen en de werkzaamheden-checklist */
+.fr-vast { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 32px; margin: 6px 0 10px; }
+.fr-vast .vraag .v { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--label); margin-bottom: 10px; }
+.fr-vast .keuzes { display: flex; flex-wrap: wrap; gap: 8px; }
+.fr-vast .keuzes .fr-in { max-width: 560px; }
+.fr-herkomst { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--stil); border: 1px dashed var(--lijn); border-radius: 5px; padding: 2px 7px; vertical-align: middle; }
+.fr-erf { background: none; border: 0; padding: 0; cursor: pointer; font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--oranje-donker); text-decoration: underline; text-underline-offset: 3px; text-transform: none; vertical-align: middle; }
+.fr-erf:hover { color: var(--oranje); }
+
+.fr-checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; margin-top: 0; }
+.fr-checklist .cgroep { grid-column: 1 / -1; font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--oranje-donker); margin: 22px 0 2px; }
+.fr-checklist label { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; font-size: 15.5px; color: var(--tekst); cursor: pointer; border-bottom: 1px solid var(--lijn-zacht); font-weight: 400; flex-direction: row; }
+.fr-checklist label b { color: var(--inkt); font-weight: 500; }
+.fr-checklist label .o { display: block; font-size: 13px; color: var(--stil); margin-top: 2px; }
+.fr-checklist input[type="checkbox"] { accent-color: var(--oranje); width: 18px; height: 18px; margin-top: 3px; flex: none; }
+.fr-checklist .cvoorstel { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--oranje-donker); border: 1px solid var(--oranje); border-radius: 5px; padding: 2px 7px; margin-left: 8px; white-space: nowrap; }
+.fr-checklist .cvoorstel.stil { color: var(--stil); border: 1px dashed var(--lijn); }
+.fr-checklist .cnum { width: 64px; margin-left: 8px; padding: 4px 8px; border: 1px solid var(--lijn); border-radius: 7px; font-family: var(--mono); font-size: 13px; background: var(--vlak); }
+.fr-checklist.compact label { padding: 9px 0; font-size: 15px; }
+.fr-checklist.compact .cgroep { margin: 12px 0 2px; }
+.fr-taakgetal { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--label); }
+
+/* Vlakken en wanden (stap 3 en 4): panelen in de ruimte, alleen zichtbaar als hij ze openklapt.
+   Een rij per vlak of per wand, met de onderbrekingen van een wand ingesprongen eronder. */
+.fr-geo .fr-vlak, .fr-geo .fr-wand { align-items: flex-end; padding: 10px 0; border-bottom: 1px solid var(--lijn-zacht); }
+.fr-geo .fr-vlak .maatje, .fr-geo .fr-wand .maatje { align-self: center; min-width: 80px; text-align: right; font-family: var(--mono); font-size: 13px; color: var(--label); }
+.fr-geo .fr-wand { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.fr-geo .fr-opening { margin-left: 24px; padding-left: 14px; border-left: 2px solid var(--lijn); align-items: flex-end; }
+.fr-geo .fr-seg.klein button { min-height: 36px; padding: 0 12px; }
+.fr-geo [data-geosom] { margin: 12px 0 4px; color: var(--inkt); }
+.fr-geo .fr-knoppenrij { gap: 22px; }
+
+/* ---------- de calculator: invoer links, de bestelling rechts ---------- */
+
+.fr-calc { display: grid; grid-template-columns: 1fr 1.05fr; gap: 0; border-top: 2px solid var(--maatlijn); }
+.fr-calc-in { padding: 26px 40px 26px 0; border-right: 1px solid var(--lijn); min-width: 0; }
+.fr-calc-uit { padding: 26px 0 26px 40px; min-width: 0; }
+/* De bestelling rechts loopt mee met het scrollen, zodat de som en de knoppen in beeld blijven
+   terwijl je links kiest. Is de kolom hoger dan het scherm, dan scrolt hij zelf. */
+@media (min-width: 901px) {
+  .fr-calc { align-items: start; }
+  .fr-calc-uit { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; scrollbar-width: thin; }
+}
+.fr-calc .fr-form { margin-top: 0; }
+.fr-acc { border: 0; border-bottom: 1px solid var(--lijn-zacht); border-radius: 0; padding: 14px 0; background: transparent; display: flex; flex-direction: column; gap: 10px; }
+.fr-acc .kop { flex: 1 1 auto; flex-direction: row; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; color: var(--inkt); flex-wrap: wrap; }
+.fr-acc .kop input { width: 20px; height: 20px; min-height: 0; accent-color: var(--oranje); }
+.fr-acc .advies { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--oranje-donker); border: 1px solid var(--oranje); border-radius: 5px; padding: 2px 7px; }
+.fr-acc:has(.kop input:not(:checked)) { opacity: .55; }
+/* Per toebehoren: levert de klant het zelf. Klein en rechts, want het is de uitzondering. */
+.fr-acc .fr-acc-klant { margin-left: auto; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--label); font-weight: 400; display: inline-flex; flex: 0 0 auto; flex-direction: row; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; }
+.fr-acc .fr-acc-klant input { width: 15px; height: 15px; }
+.fr-acc:has(.fr-acc-klant input:checked) .fr-acc-klant { color: var(--oranje-donker); }
+/* Een toebehoren dat niet in de prijslijst staat: zichtbaar uit, niet stilzwijgend weg. */
+.fr-acc.fr-acc-leeg { opacity: .55; }
+.fr-calc-verlies { font-family: var(--mono); font-size: 12.5px; color: var(--oranje-donker); border-left: 2px solid var(--oranje); padding: 4px 0 4px 14px; margin: 14px 0 10px; line-height: 1.6; }
+.fr-calc-verlies:empty { display: none; }
+/* De kop boven de regels van een vloer, als een klus er meer dan een heeft. */
+.fr-calc-vloerkop { font-size: 15px; font-weight: 600; color: var(--inkt); margin: 22px 0 0; padding-top: 16px; border-top: 2px solid var(--lijn); }
+.fr-calc-vloerkop:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.fr-calc-vloerkop .qty { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--stil); margin-left: 6px; }
+/* Wat er aanstond maar niet te rekenen viel; hoort op te vallen, want het scheelt in de bestelling. */
+.fr-calc-mist { font-family: var(--mono); font-size: 12.5px; color: #8A3B12; border-left: 2px solid var(--oranje); padding: 4px 0 4px 14px; margin: 14px 0 4px; line-height: 1.6; }
+.fr-calc-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--lijn-zacht); }
+.fr-calc-row .k { font-size: 15px; color: var(--inkt); flex: 1; padding-right: 12px; min-width: 0; }
+.fr-calc-row .k small { display: block; color: var(--stil); font-family: var(--mono); font-size: 11.5px; line-height: 1.5; margin-top: 3px; }
+.fr-calc-row .k .qty { font-family: var(--mono); color: var(--oranje-donker); font-size: 12.5px; margin-left: 4px; }
+.fr-calc-row .v { font-family: var(--mono); font-size: 16px; font-weight: 500; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fr-calc-tot { margin-top: 18px; padding: 18px 0 0; border-top: 2px solid var(--oranje); }
+.fr-calc-tot .regel { font-family: var(--mono); font-size: 12.5px; color: var(--label); line-height: 1.9; }
+.fr-calc-tot .regel.groen { color: var(--groen-tekst); }
+/* Een regel met het bedrag aan de rechterkant, voor de btw-uitsplitsing op een factuur. */
+.fr-calc-tot .regel.tweekant { display: flex; justify-content: space-between; gap: 14px; font-variant-numeric: tabular-nums; }
+.fr-calc-tot .som { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 10px 0 0; font-size: 15px; color: var(--tekst); }
+.fr-calc-tot .som b { font-family: var(--mono); font-size: 19px; color: var(--inkt); font-variant-numeric: tabular-nums; }
+.fr-calc-tot .som.marge { border-top: 1px solid var(--lijn-zacht); margin-top: 10px; padding-top: 12px; }
+.fr-calc-tot .som.marge span { font-weight: 600; color: var(--inkt); }
+.fr-calc-tot .som.marge b { color: var(--oranje-donker); }
+
+/* Aanvinkrijen op het factuurscherm */
+.fr-vinkrij { cursor: pointer; }
+.fr-vinkrij input { width: 20px; height: 20px; accent-color: var(--oranje); }
+.fr-vinkrij.stil { opacity: .55; }
+
+/* Adresvoorstellen van PDOK onder een adresveld (05-09-2026). Vast gepositioneerd, zodat de rij
+   eromheen niet van hoogte verandert en de lijst boven alles uit komt. */
+.fr-adreslijst { position: fixed; z-index: 95; background: var(--vlak); border: 1px solid var(--lijn); border-radius: 12px; box-shadow: 0 14px 34px rgba(27, 27, 31, .12); overflow: hidden; }
+.fr-adreslijst .rij { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; cursor: pointer; font-size: 15px; border-bottom: 1px solid var(--lijn-zacht); }
+.fr-adreslijst .rij b { font-weight: 600; color: var(--inkt); }
+.fr-adreslijst .rij span { font-family: var(--mono); font-size: 12.5px; color: var(--label); white-space: nowrap; }
+.fr-adreslijst .rij:hover, .fr-adreslijst .rij.actief { background: var(--oranje-zacht); }
+.fr-adreslijst .bron { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--stil); padding: 8px 16px; }
+
+/* ---------- kleinere schermen ---------- */
+
+@media (max-width: 1100px) {
+  .fr-inhoud { padding: 44px 40px 72px; }
+}
+
+/* Op een tablet en een telefoon wordt het menu een balk bovenaan die opzij schuift; de voet met
+   Mijn bedrijf wordt daar een gewoon menu-item. */
+@media (max-width: 900px) {
+  html, body { font-size: 16px; }
+  .fr-schil { display: block; }
+  .fr-zij { position: sticky; top: 0; z-index: 50; width: auto; height: auto; overflow: visible; padding: 0; border-right: 0; border-bottom: 1px solid var(--lijn); }
+  .fr-rail, .fr-zijvoet { display: none; }
+  .fr-merk { padding: 12px 20px 6px; font-size: 20px; display: flex; align-items: baseline; gap: 12px; }
+  .fr-merk-label { margin: 0; }
+  .fr-nav { flex-direction: row; gap: 2px; overflow-x: auto; padding: 0 12px; scrollbar-width: none; }
+  .fr-nav::-webkit-scrollbar { display: none; }
+  .fr-tab { height: 44px; padding: 0 10px; margin: 0; gap: 8px; border-radius: 0; border-bottom: 2px solid transparent; font-size: 15px; }
+  .fr-tab:hover { background: transparent; }
+  .fr-tab .tick { display: none; }
+  .fr-tab.actief { background: transparent; border-bottom-color: var(--oranje); }
+  .fr-tab.bedrijf { display: flex; }
+  .fr-inhoud { max-width: none; padding: 28px 20px 80px; }
+  h1.fr-kop { font-size: 28px; }
+  .fr-onderkop { font-size: 16px; }
+  .fr-paginakop { margin-bottom: 26px; }
+  .fr-tegels { grid-template-columns: 1fr 1fr; gap: 18px 0; }
+  .fr-tegel { padding: 0 16px 0 0; }
+  .fr-tegel + .fr-tegel { padding-left: 16px; }
+  .fr-tegel:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .fr-tegel .waarde { font-size: 32px; }
+  .fr-th { display: none; }
+  .fr-rij .hoofd { min-width: 0; font-size: 16.5px; }
+  .fr-twee { grid-template-columns: 1fr; }
+  .fr-blokkop h2 { font-size: 21px; }
+  .fr-calc { grid-template-columns: 1fr; border-top: 0; }
+  .fr-calc-in { padding: 0 0 26px; border-right: 0; border-bottom: 1px solid var(--lijn); }
+  .fr-calc-uit { padding: 26px 0 0; }
+  .fr-afwijk, .fr-zone .fr-afwijk { padding-left: 16px; }
+  .fr-zonekop .fr-knoppenrij { margin-left: 0; }
+}
+
+@media (max-width: 760px) {
+  .fr-vast, .fr-checklist { grid-template-columns: 1fr; }
+  .fr-schakels { grid-template-columns: 1fr; }
+  .fr-knop { height: 42px; padding: 0 18px; font-size: 15px; }
+  .fr-form input, .fr-form select, .fr-in, .fr-zoekbalk input[type="search"], .fr-zoekbalk select { min-height: 42px; }
+}
+
+/* ---------- beweging en karakter (keuze Jelle 12-09-2026, uit zeven proeven) ----------
+   Het blad komt zacht omhoog bij het wisselen van scherm, blok voor blok; een knop veert; het
+   puntjesmenu en de melding poppen open en zijn van glas; koppen zwaarder en strakker. Bewust
+   niet gekozen: een rij die oplicht bij aanwijzen, meer lucht en lichtere lijnen. Wie beweging
+   heeft uitgezet op zijn apparaat krijgt niets van dit alles. */
+@keyframes fr-verschijn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes fr-pop { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+
+.fr-inhoud > * { animation: fr-verschijn .38s cubic-bezier(.2, .8, .2, 1) both; }
+.fr-inhoud > *:nth-child(2) { animation-delay: .05s; }
+.fr-inhoud > *:nth-child(3) { animation-delay: .1s; }
+.fr-inhoud > *:nth-child(4) { animation-delay: .15s; }
+.fr-inhoud > *:nth-child(n+5) { animation-delay: .2s; }
+
+.fr-knop { transition: transform .18s cubic-bezier(.2, .8, .2, 1), background .15s, border-color .15s, box-shadow .15s; }
+.fr-knop:hover { transform: translateY(-1px); }
+.fr-knop:active { transform: scale(.97); }
+.fr-keuze, .fr-seg button { transition: transform .15s cubic-bezier(.2, .8, .2, 1), background .15s, border-color .15s; }
+.fr-keuze:active, .fr-seg button:active { transform: scale(.96); }
+
+.fr-meer-lijst { border: 0; background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: saturate(180%) blur(22px); backdrop-filter: saturate(180%) blur(22px); box-shadow: 0 0 0 .5px rgba(27, 27, 31, .12), 0 12px 40px rgba(27, 27, 31, .16); transform-origin: top right; }
+.fr-meer[open] .fr-meer-lijst { animation: fr-pop .16s cubic-bezier(.2, .8, .2, 1); }
+.fr-melding { border: 0; border-radius: 999px; background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: saturate(180%) blur(22px); backdrop-filter: saturate(180%) blur(22px); box-shadow: 0 0 0 .5px rgba(27, 27, 31, .12), 0 12px 40px rgba(27, 27, 31, .16); animation: fr-verschijn .22s cubic-bezier(.2, .8, .2, 1); }
+
+h1.fr-kop { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; }
+.fr-blokkop h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.fr-onderkop { color: var(--label); }
+
+/* De bewaarbalk onderaan de inmeetkaart: blijft onderin beeld zolang de kaart langer is dan het
+   scherm, van glas, met de maat van de opname erin en de knoppen rechts. */
+.fr-bewaarbalk { position: sticky; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 28px -12px 0; padding: 14px 12px; border-top: 1px solid var(--lijn); background: rgba(252, 252, 253, .84); -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); }
+.fr-bewaarbalk .som { font-family: var(--mono); font-size: 14px; color: var(--inkt); white-space: pre; }
+.fr-bewaarbalk .knoppen { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* Een paneel dat openklapt (Anders dan de rest, Niet rechthoekig, Plint aanpassen) komt zacht op. */
+.fr-afwijk { animation: fr-verschijn .28s cubic-bezier(.2, .8, .2, 1) both; }
+
+/* ---------- velden, overal hetzelfde (12-09-2026) ----------
+   De tekst staat in het midden van het vak (de merkletter zit hoog in zijn regel, vandaar de
+   kortere regelhoogte en het pixeltje boven), de rand wordt bij aanwijzen iets donkerder en bij
+   focus komt er een zachte oranje ring omheen. Een keuzelijst heeft een eigen pijltje, zodat hij
+   in elke browser hetzelfde is als de velden ernaast. */
+.fr-form input:not([type="checkbox"]):not([type="file"]), .fr-form select, .fr-form textarea, .fr-in, .fr-zoekbalk input[type="search"], .fr-zoekbalk select {
+  line-height: 1.25; padding-top: 1px; transition: border-color .15s, box-shadow .15s;
+}
+.fr-form textarea { padding-top: 12px; line-height: 1.5; }
+.fr-form input:hover, .fr-form select:hover, .fr-form textarea:hover, .fr-in:hover, .fr-zoekbalk input[type="search"]:hover, .fr-zoekbalk select:hover { border-color: #C9C9D1; }
+.fr-form input:focus, .fr-form select:focus, .fr-form textarea:focus, .fr-in:focus, .fr-zoekbalk input[type="search"]:focus, .fr-zoekbalk select:focus {
+  outline: none; border-color: var(--oranje); box-shadow: 0 0 0 3px rgba(234, 91, 16, .16);
+}
+.fr-form input::placeholder, .fr-in::placeholder, .fr-zoekbalk input::placeholder { color: var(--stil); opacity: 1; }
+.fr-form select, select.fr-in, .fr-zoekbalk select {
+  -webkit-appearance: none; appearance: none; padding-right: 38px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236E6E76' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center;
+}
+.fr-form select:disabled, select.fr-in:disabled { opacity: .5; cursor: default; }
+
+/* De zoekbalk: een zoekveld met een vergrootglas, de filterknop en de sortering in dezelfde
+   hoogte en met dezelfde hoeken, zodat het een familie is en geen losse knopjes. */
+.fr-zoekbalk input[type="search"] { -webkit-appearance: none; appearance: none; padding-left: 40px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2374747C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 14px center; }
+.fr-zoekbalk input[type="search"]::-webkit-search-decoration, .fr-zoekbalk input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; }
+.fr-zoekbalk .fr-knop.klein { height: 44px; padding: 0 16px 0 14px; border-radius: 10px; font-size: 14.5px; gap: 8px; background: var(--vlak); border: 1px solid var(--lijn); color: var(--inkt); }
+.fr-zoekbalk .fr-knop.klein svg { width: 16px; height: 16px; stroke: var(--label); }
+.fr-zoekbalk .fr-knop.klein:hover { border-color: #C9C9D1; background: var(--vlak); }
+.fr-zoekbalk .fr-knop.klein[aria-expanded="true"] { border-color: var(--oranje); color: var(--oranje-donker); }
+.fr-zoekbalk .fr-knop.klein[aria-expanded="true"] svg { stroke: var(--oranje); }
+.fr-zoekbalk select { min-width: 170px; }
+.fr-filterrij .fr-knop.klein { height: 34px; border-radius: 999px; padding: 0 14px; font-size: 13.5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fr-rail .voortgang { transition: none; }
+  .fr-inhoud > *, .fr-meer[open] .fr-meer-lijst, .fr-melding, .fr-afwijk { animation: none; }
+  .fr-knop:hover, .fr-knop:active, .fr-keuze:active, .fr-seg button:active { transform: none; }
+}
