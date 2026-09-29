@@ -1,0 +1,462 @@
+/* De maat van het dashboard (Jelle, 25-09-2026: "de kleine letters zijn niet leesbaar genoeg,
+   ik wil heel snel kunnen scannen"). Drie maten en niets eronder: 16 lopend, 15 klein, 12.5 voor
+   een echt label in mono hoofdletters. De inhoud van een rij staat in inkt, alleen een label is
+   grijs. Dit is dezelfde maat die Jelle op 12-09 voor het partnerportaal koos (tekst 16, rijen 68).
+   Wat uit framr.css komt en hier als inhoud gebruikt wordt (de hint met de contactpersoon, de
+   formulierlabels, de kleine knop) krijgt hieronder de dashboardmaat; framr.css zelf blijft van
+   het partnerportaal. */
+.fr-inhoud .fr-hint { font-family: var(--lopend); font-size: 15px; letter-spacing: 0; color: var(--label); }
+.fr-inhoud .fr-form label, .fr-inhoud .fr-veldlabel { font-size: 15px; }
+.fr-inhoud .fr-knop.klein { font-size: 15px; height: 38px; }
+.fr-inhoud .fr-stand { font-size: 15px; }
+.fr-inhoud .fr-in.klein { font-size: 15px; }
+
+/* Het dashboard van de belronde bouwt op het ontwerpsysteem van het portaal (framr.css):
+   dezelfde tokens, dezelfde rijen en knoppen. Wat hier staat is alleen wat het portaal niet
+   heeft: de modusbalk, de funnel als maatlijn, de mijlpalen van een partner, de dagstaven
+   van het weekrapport en de uitklapbare formulieren onder een rij. */
+
+.bd-modus { display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); margin-bottom: 18px; }
+.bd-modus::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--groen); }
+.bd-modus.nep::before { background: var(--oranje); }
+.bd-modus.lezen::before { background: var(--maatlijn); }
+
+.bd-kies { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.bd-kies label { font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); }
+
+/* De funnel als maatlijn: een streep per status, de lengte is het aantal. */
+.bd-funnel { list-style: none; margin: 8px 0 0; padding: 0; border-left: 2px solid var(--inkt); }
+.bd-funnel li { display: grid; grid-template-columns: 30px 200px 1fr 56px; align-items: center; gap: 12px; padding: 5px 0 5px 16px; position: relative; font-family: var(--mono); font-size: 15px; }
+.bd-funnel li::before { content: ""; position: absolute; left: -2px; top: 50%; width: 8px; height: 1px; background: var(--maatlijn); }
+.bd-funnel li.mijlpaal::before { width: 14px; height: 2px; background: var(--oranje); }
+.bd-funnel .nr { color: var(--stil); text-align: right; font-variant-numeric: tabular-nums; }
+.bd-funnel .naam { color: var(--inkt); }
+.bd-funnel li.mijlpaal .naam { color: var(--oranje); font-weight: 500; }
+.bd-funnel .staaf { height: 10px; background: var(--lijn-zacht); border-radius: 2px; position: relative; }
+.bd-funnel .staaf i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--inkt); border-radius: 2px; }
+.bd-funnel li.mijlpaal .staaf i { background: var(--oranje); }
+.bd-funnel .tal { text-align: right; font-variant-numeric: tabular-nums; }
+.bd-funnel li.eind .naam { color: var(--stil); }
+
+/* De stand als stip met een woord, dezelfde taal als de klus in het portaal. */
+.bd-stip { display: inline-flex; align-items: center; gap: 8px; font-family: var(--kop); font-size: 15px; font-weight: 600; color: var(--label); white-space: nowrap; }
+.bd-stip::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--vlak); border: 2px solid var(--lijn); box-sizing: border-box; }
+.bd-stip.aan { color: var(--inkt); }
+.bd-stip.aan::before { background: var(--oranje); border: 0; box-shadow: 0 0 0 3px var(--oranje-zacht); }
+.bd-stip.goed::before { background: var(--groen); border: 0; }
+.bd-stip.let::before { background: var(--oranje-donker); border: 0; }
+.bd-stip.stil::before { background: var(--maatlijn); border: 0; }
+
+.bd-badge { display: inline-block; font-family: var(--mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--lijn); color: var(--label); vertical-align: middle; }
+.bd-badge.oranje { border-color: var(--oranje); color: var(--oranje); }
+.bd-badge.groen { border-color: var(--groen); color: var(--groen-tekst); }
+
+.bd-let { color: var(--oranje-donker); font-size: 15px; }
+.bd-sub { display: block; color: var(--tekst); font-size: 15px; margin-top: 4px; line-height: 1.45; }
+.bd-sub b { color: var(--inkt); font-weight: 500; }
+
+/* Een formulier dat onder een rij openklapt. */
+.bd-rij { flex-wrap: wrap; }
+.bd-rij .hoofd { min-width: 240px; }
+.bd-uitklap { flex-basis: 100%; padding: 8px 0 14px; border-top: 1px dashed var(--lijn-zacht); margin-top: 8px; }
+.bd-uitklap .fr-form { margin-top: 10px; max-width: none; }
+.bd-uitklap .fr-veldrij label { flex: 1 1 180px; }
+.bd-acties { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.bd-acties a.fr-knop { text-decoration: none; }
+.bd-knopje { font-family: var(--kop); font-size: 15px; font-weight: 600; background: transparent; border: 1px solid var(--lijn); border-radius: 999px; padding: 6px 12px; color: var(--inkt); cursor: pointer; }
+.bd-knopje:hover { border-color: var(--oranje); color: var(--oranje); }
+.bd-knopje.aan { background: var(--oranje); border-color: var(--oranje); color: #fff; }
+.bd-knopje[disabled] { opacity: .45; cursor: default; }
+
+/* De mijlpalen van een partner: zestien streepjes, gehaald is oranje. */
+.bd-mijlpalen { display: inline-flex; gap: 3px; align-items: flex-end; height: 16px; }
+.bd-mijlpalen i { display: block; width: 6px; height: 10px; background: var(--lijn); border-radius: 1px; }
+.bd-mijlpalen i.ja { background: var(--oranje); height: 16px; }
+
+/* Het weekrapport: een staaf per dag tegen het dagdoel. */
+.bd-dagen { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: end; height: 150px; margin: 12px 0 4px; border-bottom: 1px solid var(--lijn); padding-bottom: 6px; }
+.bd-dag { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.bd-dag .kolom { width: 100%; max-width: 44px; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; position: relative; }
+.bd-dag .doel { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--oranje); }
+.bd-dag .staaf { background: var(--inkt); border-radius: 3px 3px 0 0; min-height: 2px; }
+.bd-dag .staaf.bereikt { background: var(--oranje); }
+.bd-dag .lbl { font-family: var(--mono); font-size: 12.5px; color: var(--stil); }
+.bd-dag .tal { font-family: var(--mono); font-size: 12.5px; color: var(--inkt); font-variant-numeric: tabular-nums; }
+
+.bd-tabel { width: 100%; border-collapse: collapse; font-size: 15px; }
+.bd-tabel th { text-align: left; font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); font-weight: 400; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--lijn); }
+.bd-tabel td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--lijn-zacht); vertical-align: top; }
+.bd-tabel td.tal, .bd-tabel th.tal { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.bd-tabel td.mono { font-family: var(--mono); font-size: 15px; }
+.bd-tabel-wrap { overflow-x: auto; }
+
+.bd-demo-onderdelen td input[type="checkbox"] { accent-color: var(--oranje); }
+.bd-demo-onderdelen select, .bd-demo-onderdelen input[type="text"] { min-height: 32px; border: 1px solid var(--lijn); border-radius: 8px; padding: 0 8px; font-family: var(--kop); font-size: 15px; background: var(--vlak); }
+
+.bd-tekst { font-size: 16px; color: var(--tekst); max-width: 72ch; line-height: 1.6; }
+.bd-citaat { border-left: 2px solid var(--maatlijn); padding-left: 14px; color: var(--tekst); font-size: 16px; margin: 8px 0; }
+.bd-lijstje { margin: 6px 0 0; padding-left: 18px; color: var(--tekst); font-size: 16px; }
+.bd-lijstje li { margin-bottom: 4px; }
+.bd-kop-rechts { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.bd-vergelijk { display: grid; grid-template-columns: 1fr auto auto; gap: 6px 24px; font-size: 16px; max-width: 560px; }
+.bd-vergelijk .k { font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); }
+.bd-vergelijk .tal { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.bd-vergelijk .tal.stil { color: var(--stil); }
+
+/* Smal scherm: framr.css maakt van de zijbalk een balk bovenaan die opzij schuift. Die stond
+   hier eerst op display none, waardoor er op een smal venster helemaal geen menu meer was en
+   geen enkel scherm te bereiken. Nu loopt hij als een rij, met de groepen als tussenkopjes. */
+@media (max-width: 900px) {
+  .fr-inhoud { padding: 24px 18px 60px; }
+  .bd-funnel li { grid-template-columns: 26px 150px 1fr 44px; }
+  .fr-nav { align-items: center; overflow-y: visible; padding-bottom: 0; }
+  .bd-navkop { flex: none; font-family: var(--mono); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--stil); padding: 0 10px 0 6px; white-space: nowrap; }
+  .bd-navkop:first-child { padding-left: 0; }
+  .bd-navtal { padding: 1px 6px; font-size: 12.5px; }
+}
+
+/* De belsessie: de lead links, het gesprek rechts; op een smal scherm onder elkaar. */
+.bs-kop { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.bs-kop .stap { font-family: var(--mono); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); }
+.bs-kop .rechts { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+/* De belsessie in twee kolommen: links wie je belt en wat je zegt, rechts wat je vastlegt. Een
+   keer als een kolom met stappen gebouwd, maar Jelle wilde het naast elkaar terug: tijdens het
+   invullen wil je het script kunnen blijven zien (20-09-2026). */
+.bs-twee { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0 40px; align-items: start; }
+.bs-rechtskop { margin: 8px 0 4px; font-size: 20px; }
+
+/* Een lijstje om aan te klikken: waar hij afhaakte (een keuze), waar hij op aansloeg en welke
+   mijlpalen er staan (meerdere). Twee kolommen zodat een lijst van zestien niet eindeloos wordt. */
+.bd-keuzes { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 2px 20px; }
+.bd-keuze { display: flex; align-items: baseline; gap: 9px; padding: 5px 0; font-size: 15px; color: var(--tekst); cursor: pointer; }
+.bd-keuze input { flex: none; accent-color: var(--oranje); }
+.bd-keuze:hover span { color: var(--inkt); }
+
+/* Een lijst met een staafje: waar het gesprek het vaakst strandt, in een oogopslag. */
+.bd-balken { list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 5px; }
+.bd-balken li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 28px; gap: 10px; align-items: center; font-size: 15px; color: var(--tekst); }
+.bd-balken .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-balken .staaf { height: 8px; background: var(--lijn-zacht); border-radius: 2px; overflow: hidden; }
+.bd-balken .staaf i { display: block; height: 100%; background: var(--oranje); }
+.bd-balken .tal { font-family: var(--mono); font-size: 15px; text-align: right; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1000px) { .bs-twee { grid-template-columns: 1fr; } }
+.bs-nummer { font-family: var(--mono); font-size: 30px; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.bs-nummer a { border-bottom: 2px solid var(--oranje); }
+.bs-tijd { font-family: var(--mono); font-size: 15px; color: var(--label); letter-spacing: .08em; }
+.bs-tijd.loopt { color: var(--oranje); }
+.bs-opname { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--label); }
+.bs-opname::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--lijn); }
+.bs-opname.aan::before { background: var(--oranje-donker); box-shadow: 0 0 0 3px var(--oranje-zacht); animation: bs-puls 1.2s ease-in-out infinite; }
+@keyframes bs-puls { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .bs-opname.aan::before { animation: none; } }
+.bs-script { border-top: 2px solid var(--maatlijn); margin-top: 18px; padding-top: 12px; }
+.bd-uitklap .bs-script { border-top: 0; margin-top: 4px; }
+.bs-script h3 { font-size: 16px; margin: 14px 0 6px; }
+.bs-script ol, .bs-script ul { margin: 0; padding-left: 20px; color: var(--tekst); font-size: 16px; }
+.bs-script li { margin-bottom: 8px; }
+.bs-script .vult { display: block; font-family: var(--mono); font-size: 12.5px; color: var(--label); letter-spacing: .04em; }
+.bs-script .door { display: block; color: var(--label); font-size: 15px; }
+.bs-vraag input, .bs-vraag select { margin-top: 6px; }
+.bs-lijst { list-style: none; padding: 0; margin: 8px 0 0; }
+.bs-lijst li { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--lijn-zacht); font-size: 16px; color: var(--tekst); }
+.bs-lijst li::before { content: ""; width: 10px; height: 2px; background: var(--maatlijn); flex: none; position: relative; top: -3px; }
+.bs-klaar { text-align: center; padding: 40px 0; }
+
+
+/* Het AI-kopje onder een gesprek, en de drie vragen op de leadkaart. */
+.bd-uitklap-ai { flex-basis: 100%; }
+.bd-ai { margin: 6px 0 4px; padding: 10px 0 8px 14px; border-left: 2px solid var(--oranje); font-size: 15px; color: var(--tekst); }
+.bd-ai-kop { font-family: var(--mono); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--oranje); margin-right: 10px; }
+.bd-ai-p { margin: 6px 0; max-width: 80ch; }
+.bd-ai-p b { color: var(--inkt); font-weight: 600; margin-right: 4px; }
+.bd-ai .fr-form { max-width: none; margin-top: 8px; }
+.bd-wil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 28px; margin: 4px 0 14px; padding: 14px 0; border-top: 2px solid var(--maatlijn); border-bottom: 1px solid var(--lijn); font-size: 16px; color: var(--tekst); }
+.bd-wil .k { display: block; font-family: var(--mono); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--oranje); margin-bottom: 4px; }
+@media (max-width: 800px) { .bd-wil { grid-template-columns: 1fr; gap: 10px 0; } }
+
+/* Het aantal dat nog ligt, naast Vandaag en Belsessie: overzicht vanaf elk scherm. */
+.bd-navtal { flex: none; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--inkt); background: var(--oranje-zacht); border-radius: 999px; padding: 2px 8px; }
+.fr-tab.actief .bd-navtal { background: #FFFFFF; color: var(--oranje); }
+
+/* De langere uitleg onder een paginakop: dicht tenzij je hem opent. Boven de vouw staat een
+   korte regel die zegt wat je hier doet, niet het hele waarom. */
+.bd-uitleg { margin-top: 8px; max-width: 76ch; }
+.bd-uitleg > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); }
+.bd-uitleg > summary::-webkit-details-marker { display: none; }
+.bd-uitleg > summary::after { content: ""; width: 5px; height: 5px; border-right: 1px solid var(--label); border-bottom: 1px solid var(--label); transform: rotate(45deg) translate(-1px, -1px); }
+.bd-uitleg[open] > summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
+.bd-uitleg > summary:hover { color: var(--oranje); }
+.bd-uitleg > p { margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: var(--tekst); border-left: 2px solid var(--maatlijn); padding-left: 14px; }
+
+/* Bedrijf toevoegen: een breed formulier met korte rijen, en de uitkomst erboven. */
+.bd-nieuwform { max-width: none; }
+.bd-nieuwform label.breed { flex: 2 1 320px; }
+.bd-nieuwform .fr-hint { max-width: 74ch; margin: 0; }
+.bd-vinkje { flex-direction: row !important; align-items: center; gap: 9px !important; flex: 0 1 auto !important; min-width: 0 !important; font-size: 15px; color: var(--tekst); }
+.bd-uitkomst { border: 1px solid var(--lijn); border-left: 3px solid var(--oranje); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 18px 0 4px; background: var(--vlak); }
+.bd-uitkomst.let { border-left-color: var(--inkt); }
+.bd-uitkomst p { margin: 0 0 10px; font-size: 16px; color: var(--inkt); }
+
+.bd-groepkop { font-size: 16px; margin: 22px 0 6px; display: flex; align-items: baseline; gap: 10px; }
+.bd-groepkop .maatje { font-family: var(--mono); font-size: 12.5px; color: var(--stil); }
+.bd-groepkop.vandaag { color: var(--oranje); }
+.bd-werk .hoofd { min-width: 220px; flex: 1 1 260px; }
+.bd-werk .sub { flex: 1 1 200px; }
+
+/* De kop van het dossier: de acht antwoorden in een oogopslag. */
+.bd-dossierkop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 28px; margin: 4px 0 16px; padding: 14px 0; border-top: 2px solid var(--inkt); border-bottom: 1px solid var(--lijn); font-size: 16px; color: var(--tekst); }
+.bd-dossierkop .k { display: block; font-family: var(--mono); font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--label); margin-bottom: 3px; }
+@media (max-width: 900px) { .bd-dossierkop { grid-template-columns: 1fr; } }
+
+/* Herhaalbare blokken: bezwaren en extra dingen. */
+.bd-herhaal { display: flex; flex-direction: column; gap: 6px; }
+.bd-herhaal-item { border-left: 2px solid var(--maatlijn); padding-left: 12px; margin: 6px 0; }
+.bd-eerder li { font-size: 15px; }
+.bd-details { margin: 8px 0; }
+.bd-details summary { cursor: pointer; font-family: var(--kop); font-weight: 600; font-size: 15px; color: var(--inkt); }
+.bd-pre { white-space: pre-wrap; font-family: var(--body, inherit); font-size: 15px; color: var(--tekst); background: var(--vlak); border: 1px solid var(--lijn-zacht); border-radius: 8px; padding: 10px 12px; margin: 6px 0; max-width: 80ch; }
+.bd-vinken { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin: 6px 0 14px; }
+.bd-vink { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; color: var(--tekst); }
+.bd-vink input { accent-color: var(--oranje); }
+
+/* De speler van een opname. */
+.bd-speler { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 6px 0; }
+.bd-speler audio { height: 34px; max-width: 100%; }
+.bd-upload-status { margin: 4px 0 0; }
+
+/* Het weekrapport: herleiding onder een cijfer. */
+.bd-mini { font-family: var(--mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; background: transparent; border: 1px solid var(--lijn); border-radius: 999px; padding: 1px 7px; color: var(--label); cursor: pointer; margin-left: 6px; }
+.bd-mini:hover { border-color: var(--oranje); color: var(--oranje); }
+.bd-herleiding { grid-column: 1 / 4; font-size: 15px; color: var(--tekst); padding: 4px 0 8px 12px; border-left: 2px solid var(--maatlijn); }
+
+/* De reeksen in beheer. */
+.bd-reeks td input[type="text"], .bd-reeks td input[type="number"], .bd-reeks td select { min-height: 30px; border: 1px solid var(--lijn); border-radius: 8px; padding: 0 8px; font-family: var(--kop); font-size: 15px; background: var(--vlak); width: 100%; box-sizing: border-box; }
+.bd-periode { max-width: none; }
+.bd-afrond { margin-top: 6px; }
+.fr-tegel small { display: block; font-family: var(--mono); font-size: 12.5px; color: var(--stil); font-weight: 400; }
+
+.bd-vandaag-acties { margin: 0 0 10px; }
+.bd-dagstand { margin-bottom: 18px; }
+.bd-dagstand summary { cursor: pointer; font-size: 15px; }
+.bd-dagstand .fr-tegels { margin-top: 10px; }
+.bs-regel { border-left: 3px solid var(--maatlijn); padding-left: 10px; }
+.bs-reacties { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.bs-reactie summary { cursor: pointer; font-size: 16px; }
+.bs-reactie ol { margin-top: 6px; }
+
+/* De werkwijze bij een taak, achter een knop. */
+.bd-sop { border-left: 3px solid var(--lijn); padding-left: 12px; margin: 8px 0 12px; }
+.bd-sop .bd-lijstje { margin-bottom: 6px; }
+
+/* Inloggen en gebruikersbeheer (aanvulling onderdeel 7). */
+.bd-inlog { max-width: 420px; margin: 60px auto; }
+.bd-inlog .fr-form { margin-top: 18px; }
+.bd-ikben { font-family: var(--kop); font-size: 15px; display: inline-flex; gap: 6px; align-items: center; }
+
+/* Meldingen over een gewijzigde werkwijze (aanvulling onderdeel 6). */
+.bd-meldingen { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 16px; }
+.bd-melding { border: 1px solid var(--oranje-donker); border-radius: 12px; padding: 12px 16px; background: var(--vlak); }
+.bd-melding .kop { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-family: var(--kop); font-size: 16px; }
+.bd-melding .bd-tekst { margin: 6px 0 2px; }
+.bd-melding .bd-acties { margin-top: 8px; }
+
+/* Vandaag als een werklijst op urgentie (structuur A, keuze Jelle 25-09-2026 uit vijf
+   varianten). Links wanneer, in het midden wat en waarom, rechts de knop. Te laat in donker
+   oranje, later in stil grijs, de rest in inkt. */
+.wl-chips { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 4px 0 18px; }
+.wl-chip { appearance: none; cursor: pointer; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--lijn); background: var(--vlak); font-family: var(--lopend); font-size: 15px; color: var(--tekst); display: inline-flex; align-items: center; gap: 8px; }
+.wl-chip span { font-family: var(--mono); font-size: 13px; color: var(--label); }
+.wl-chip.aan { border: 1.5px solid var(--inkt); color: var(--inkt); font-weight: 600; }
+.wl-lijst { border-top: 2px solid var(--inkt); }
+.wl-rij { display: grid; grid-template-columns: 160px minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--lijn); }
+.wl-wanneer { font-family: var(--kop); font-size: 17px; font-weight: 700; color: var(--inkt); line-height: 1.3; }
+.wl-rij.laat .wl-wanneer { color: var(--oranje-donker); }
+.wl-rij.later .wl-wanneer { color: var(--stil); font-weight: 600; }
+.wl-titel { font-size: 18px; font-weight: 600; color: var(--inkt); line-height: 1.3; }
+.wl-titel a { color: inherit; border-bottom: 1.5px solid var(--lijn); }
+.wl-titel a:hover { border-bottom-color: var(--oranje); }
+.wl-waarom { font-size: 15px; color: var(--label); margin-top: 3px; line-height: 1.45; }
+.wl-acties { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.wl-uitklap { grid-column: 1 / -1; }
+.wl-meer { margin: 12px 0; }
+@media (max-width: 900px) {
+  .wl-rij { grid-template-columns: 1fr; gap: 6px; }
+  .wl-acties { justify-content: flex-start; }
+}
+
+/* Leads in de regelvorm van A (25-09-2026): een raster met dezelfde verdeling voor de kop en
+   elke rij, zodat de koppen boven hun cel staan. Bedrijf en volgende actie krijgen de ruimte. */
+.ll-balk { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin: 0 0 12px; }
+.ll-zoek { height: 42px; min-width: 300px; flex: 1 1 300px; border: 1px solid var(--lijn); border-radius: 10px; padding: 0 14px; font-size: 16px; font-family: var(--lopend); background: var(--vlak); }
+.ll-balk .wl-chips { margin: 0; }
+.ll-sorteer { margin-left: auto; }
+.ll-meer { margin: 0 0 16px; }
+.ll-meer > summary { font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); cursor: pointer; }
+.ll-meer .fr-zoekbalk { margin-top: 10px; }
+.ll-kop, .ll-rij { display: grid; grid-template-columns: minmax(0, 24fr) minmax(0, 14fr) minmax(0, 17fr) minmax(0, 26fr) 196px; gap: 8px 20px; align-items: center; }
+.ll-kop { padding: 8px 0; border-bottom: 2px solid var(--inkt); font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--label); }
+.ll-rij { padding: 16px 0; border-bottom: 1px solid var(--lijn); }
+.ll-naam { font-size: 18px; font-weight: 600; color: var(--inkt); line-height: 1.3; }
+.ll-naam a { color: inherit; border-bottom: 1.5px solid var(--lijn); }
+.ll-naam a:hover { border-bottom-color: var(--oranje); }
+.ll-sub { font-size: 15px; color: var(--label); margin-top: 3px; line-height: 1.45; }
+.ll-fase, .ll-contact { font-size: 16px; color: var(--inkt); }
+.ll-stip { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--oranje); margin-right: 8px; vertical-align: 1px; }
+.ll-stip.groen { background: var(--groen); }
+.ll-stip.stil { background: var(--maatlijn); }
+.ll-wanneer { font-family: var(--kop); font-size: 17px; font-weight: 700; color: var(--inkt); line-height: 1.3; }
+.ll-rij.laat .ll-wanneer { color: var(--oranje-donker); }
+.ll-rij.later .ll-wanneer { color: var(--stil); font-weight: 600; }
+.ll-rij.geen .ll-wanneer { color: var(--oranje-donker); font-weight: 600; }
+.ll-rij.later .ll-fase, .ll-rij.later .ll-contact, .ll-rij.later .ll-naam { color: var(--label); }
+@media (max-width: 900px) {
+  .ll-kop { display: none; }
+  .ll-rij { grid-template-columns: 1fr; gap: 6px; }
+  .ll-sorteer { margin-left: 0; }
+}
+
+/* Een reactiestatus in een lijstcel of een opsomming leest als tekst, niet als een pil die afbreekt. */
+.ll-contact .bd-badge, .bs-lijst .bd-badge { border: 0; padding: 0; font-family: var(--lopend); font-size: 15px; letter-spacing: 0; text-transform: none; white-space: normal; }
+
+/* Het menu (29-09-2026): vijf schermen als platte lijst, Beheer onderaan als tandwiel. */
+.fr-nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-bottom: 10px; }
+.fr-tab.bd-tandwiel { margin-top: 18px; border-top: 1px solid var(--lijn-zacht); padding-top: 14px; border-radius: 0 10px 10px 0; color: var(--label); }
+.fr-tab.bd-tandwiel .tick { display: none; }
+.fr-tab.bd-tandwiel .lbl::before { content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 10px; vertical-align: -2px; border-radius: 50%; border: 2px dotted currentColor; box-sizing: border-box; }
+.fr-tab.bd-tandwiel.actief { color: var(--inkt); }
+/* De voet: wie je bent, en uitloggen of (oefenstand) een naam kiezen. */
+.fr-zijvoet .bd-uitlog { margin-top: 10px; font-size: 13px; padding: 4px 10px; }
+.fr-zijvoet .bd-ikkies { margin-top: 8px; width: 100%; font-size: 14px; }
+
+/* Vandaag: de scope-chips en de teamregel. */
+.bd-team { margin: 0 0 6px; display: flex; flex-direction: column; gap: 12px; }
+.bd-scopekies { margin: 0; }
+.tm-regel { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.tm-persoon { appearance: none; cursor: pointer; text-align: left; background: var(--vlak); border: 1px solid var(--lijn); border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; font-family: var(--lopend); color: var(--tekst); }
+.tm-persoon:hover { border-color: var(--stil); }
+.tm-persoon.aan { border: 1.5px solid var(--inkt); }
+.tm-naam { font-family: var(--kop); font-size: 17px; font-weight: 600; color: var(--inkt); }
+.tm-cijfers { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; color: var(--label); }
+.tm-cijfers b { font-family: var(--mono); font-size: 15px; color: var(--inkt); font-weight: 500; }
+.tm-cijfers .laat b { color: var(--oranje-donker); }
+.wl-rij.afspraak .wl-wanneer { font-family: var(--mono); font-size: 22px; font-weight: 500; letter-spacing: .02em; }
+.wl-duur { display: block; font-family: var(--mono); font-size: 12.5px; color: var(--stil); letter-spacing: .04em; margin-top: 2px; }
+
+/* Tabbladen van Terugkijken en Beheer, en de kop binnen een tabblad. */
+.bd-tabs { margin: -6px 0 22px; }
+.bd-tabs .wl-chip { text-decoration: none; }
+.bd-tabkop { display: flex; align-items: flex-end; gap: 16px 32px; flex-wrap: wrap; margin: 0 0 14px; }
+.bd-tabkop > div:first-child { flex: 1 1 380px; min-width: 0; }
+.bd-tabkop h2 { font-size: 24px; letter-spacing: -0.015em; margin: 0; }
+.bd-tabsub { margin: 6px 0 0; font-size: 16px; color: var(--tekst); max-width: 62ch; }
+.bd-tabkop .rechts { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-bottom: 4px; }
+.bd-tabkop .bd-uitleg { margin-top: 6px; }
+.bd-allecijfers { margin-top: 36px; }
+.bd-allecijfers > summary { font-family: var(--kop); font-size: 17px; font-weight: 600; color: var(--inkt); cursor: pointer; padding: 12px 0; border-top: 2px solid var(--maatlijn); }
+/* Bedrijf toevoegen, boven de leadlijst. */
+.ll-nieuw { border: 1px solid var(--lijn); border-radius: 14px; padding: 18px 22px 22px; margin: 0 0 22px; background: var(--vlak); }
+.ll-nieuw .bd-tabkop { margin-bottom: 4px; }
+
+/* De belsessie (29-09-2026). Bovenaan wie en waarom, dan geschiedenis naast wat we al weten,
+   dan links wat je zegt en rechts wat er gebeurde. */
+.bs-kop .scheiding { color: var(--maatlijn); }
+.bs-hoofd { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: 20px 32px; align-items: start; padding-bottom: 18px; border-bottom: 2px solid var(--inkt); margin-bottom: 18px; }
+.bs-hoofd h1.fr-kop { margin: 8px 0 4px; }
+.bs-hoofd h1.fr-kop a { color: inherit; }
+.bs-wie { font-size: 16px; color: var(--label); margin: 0 0 10px; }
+.bs-start { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bs-start .fr-knop:not(.klein) { height: 44px; }
+.bs-waarom { border: 1.5px solid var(--oranje); border-radius: 12px; padding: 14px 18px; background: var(--vlak); }
+.bs-waarom .t { font-size: 18px; font-weight: 600; color: var(--inkt); line-height: 1.35; margin: 6px 0 4px; }
+.bs-waarom .sub { font-size: 15px; color: var(--label); margin: 2px 0 0; }
+.bs-eyebrow { color: var(--label); }
+.bs-eyebrow::before { display: none; }
+.bs-waarom .bs-eyebrow { color: var(--oranje-donker); }
+.bs-info { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 32px; align-items: start; margin-bottom: 24px; }
+.bs-gesch { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 7px 14px; font-size: 15px; color: var(--inkt); padding: 10px 0; margin-top: 8px; border-top: 1px solid var(--lijn-zacht); border-bottom: 1px solid var(--lijn-zacht); }
+.bs-gesch .g-dag { font-family: var(--mono); font-size: 14px; color: var(--stil); white-space: nowrap; }
+.bs-gesch .g-sam { display: block; color: var(--label); font-size: 14.5px; }
+.bs-sub { font-size: 15px; color: var(--label); margin: 8px 0 0; }
+.bs-sub a { border-bottom: 1px solid var(--lijn); }
+.bs-feiten { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; margin-top: 8px; border-top: 1px solid var(--lijn-zacht); border-bottom: 1px solid var(--lijn-zacht); }
+.bs-feiten.leeg { padding: 12px 0; }
+.bs-feiten.leeg .bs-sub { margin: 0; }
+.bs-feit { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--lijn); font-size: 15px; color: var(--inkt); }
+.bs-feit b { font-weight: 600; }
+.bs-feit.bezwaar { border-color: var(--oranje-zacht); background: var(--oranje-zacht); color: var(--oranje-donker); }
+.bs-meerover { margin-top: 10px; }
+.bs-twee { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 32px; align-items: start; }
+.bs-zegkop { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.bs-zegkop .t { font-family: var(--kop); font-size: 20px; font-weight: 600; color: var(--inkt); }
+.bs-opening { margin: 0 0 14px; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: var(--inkt); line-height: 1.5; }
+.bs-opening .stop { color: var(--oranje-donker); font-weight: 600; }
+.bs-reacties { display: flex; flex-direction: column; border-top: 1px solid var(--lijn-zacht); margin-top: 6px; }
+.bs-reactie { border-bottom: 1px solid var(--lijn-zacht); }
+.bs-reactie > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 10px 0; font-size: 16px; font-weight: 600; color: var(--inkt); }
+.bs-reactie > summary::-webkit-details-marker { display: none; }
+.bs-reactie > summary .herken { font-weight: 400; color: var(--stil); font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+.bs-reactie > summary::after { content: "open"; font-weight: 400; color: var(--stil); font-size: 14px; flex: none; }
+.bs-reactie[open] > summary::after { content: "dicht"; }
+.bs-reactie > summary:hover { color: var(--oranje); }
+.bs-reactie ol { margin: 0 0 10px; padding-left: 20px; font-size: 16px; color: var(--tekst); line-height: 1.5; }
+.bs-reactie li { margin-bottom: 6px; }
+.bs-reactie .bd-sub { margin: 0 0 12px; }
+.bs-meerzeg { margin: 10px 0 0; }
+.bs-meerzeg > summary { font-size: 16px; }
+.bs-vragen { margin: 8px 0 4px; padding-left: 22px; font-size: 16px; color: var(--inkt); line-height: 1.5; }
+.bs-vragen li { margin-bottom: 8px; }
+.bs-vragen .door { display: block; font-size: 14.5px; color: var(--label); }
+.bs-checklist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--lijn-zacht); }
+.bs-checklist li { border-bottom: 1px solid var(--lijn-zacht); }
+.bs-checklist label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; font-size: 16px; color: var(--inkt); line-height: 1.45; cursor: pointer; }
+.bs-checklist input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--oranje); flex: none; }
+.bs-checklist input:checked + span { color: var(--stil); text-decoration: line-through; }
+.bs-kaart { border: 1px solid var(--lijn); border-radius: 12px; padding: 20px; background: var(--vlak); }
+.bs-kaartkop { font-size: 20px; margin: 0 0 4px; }
+.bs-kaart > .bs-sub { margin: 0 0 8px; }
+.bs-kaart .bs-eyebrow { margin: 12px 0 8px; }
+.bs-uitkomsten { display: flex; flex-wrap: wrap; gap: 8px; }
+.bs-uitkomst { position: relative; display: inline-flex; align-items: center; padding: 9px 15px; border-radius: 999px; border: 1px solid var(--lijn); font-family: var(--lopend); font-size: 16px; color: var(--inkt); cursor: pointer; background: var(--vlak); line-height: 1.2; }
+.bs-uitkomst input { position: absolute; opacity: 0; width: 0; height: 0; }
+.bs-uitkomst:hover { border-color: var(--stil); }
+.bs-uitkomst.aan, .bs-uitkomst:has(input:checked) { border: 1.5px solid var(--oranje); font-weight: 600; padding: 8.5px 14.5px; }
+.bs-uitkomst[disabled] { opacity: .45; cursor: default; }
+.bs-vastleg { margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+.bs-wacht, .bs-klaarzin { margin: 0; padding: 14px 16px; border-radius: 10px; font-size: 15px; }
+.bs-wacht { background: var(--grond); border: 1px dashed var(--maatlijn); color: var(--stil); }
+.bs-klaarzin { background: var(--groen-zacht); color: var(--groen-tekst); font-weight: 500; }
+.bs-form .fr-veldrij label { flex: 1 1 150px; }
+.bs-form label { font-size: 15px; color: var(--tekst); }
+.bs-form label .fr-hint { margin-left: 4px; }
+.bs-veld { display: flex; flex-direction: column; gap: 8px; }
+.bs-veldnaam { font-size: 15px; color: var(--tekst); }
+.bs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.bs-chip { position: relative; display: inline-flex; align-items: center; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--lijn); font-size: 15px; color: var(--inkt); cursor: pointer; background: var(--vlak); line-height: 1.2; }
+.bs-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+.bs-chip:hover { border-color: var(--stil); }
+.bs-chip:has(input:checked) { border: 1.5px solid var(--oranje); background: var(--oranje-zacht); font-weight: 600; padding: 6.5px 12.5px; }
+.bs-bezwaren { display: flex; flex-direction: column; gap: 8px; }
+.bs-bericht { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 10px; background: var(--grond); border: 1px solid var(--lijn-zacht); }
+.bs-bericht textarea { font-size: 15px; }
+.bs-bericht .bd-knopje { align-self: flex-start; }
+.bs-meer { margin: 4px 0 0; }
+.bs-meer > summary { font-size: 15px; color: var(--label); }
+.bs-meer[open] > summary { color: var(--inkt); margin-bottom: 8px; }
+.bs-meer .fr-veldrij, .bs-meer .bd-herhaal { margin-bottom: 10px; }
+.bd-uitklap .bs-form { margin-top: 6px; }
+@media (min-width: 1100px) {
+  .bs-twee > .bs-kaart { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+}
+@media (max-width: 1000px) {
+  .bs-hoofd, .bs-info, .bs-twee { grid-template-columns: 1fr; }
+}
+
+/* De kern van het eerste gesprek in drie zinnen, boven het script (29-09-2026). */
+.bs-kern { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 0 16px; }
+.bs-kern span { border-top: 2px solid var(--oranje); padding-top: 8px; font-size: 15px; color: var(--tekst); line-height: 1.45; }
+.bs-kern b { display: block; font-family: var(--mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--oranje-donker); margin-bottom: 4px; font-weight: 400; }
+/* Straks in de rij: de terugbelmomenten die al vaststaan. */
+.wl-straks .wl-wanneer { font-size: 15px; font-weight: 600; }
+.wl-waarom b { color: var(--inkt); font-weight: 600; }
+@media (max-width: 700px) { .bs-kern { grid-template-columns: 1fr; } }
